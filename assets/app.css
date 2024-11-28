@@ -1,3 +1,14 @@
 .navbar{
     box-shadow: 0 0 25px 0 hsla(180, 30%, 82%, 0.50);
 }
+@font-face {
+    font-family: "Host Grotesk";
+    src: url(/assets/fonts/HostGrotesk-VariableFont_wght.ttf);
+}
+body{
+    color: #141717;
+    font-family: "Host Grotesk";
+    font-weight: medium;
+    max-width: 100%;
+    overflow-x: hidden;
+}

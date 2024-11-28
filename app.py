@@ -1,5 +1,6 @@
 import dash
 from dash import Dash, html, dcc
+from components.Button import Button
 
 app = Dash(__name__, use_pages=True)
 
@@ -7,23 +8,34 @@ app.layout = html.Div(
     [
         html.Div(
             [
-                html.A(
-                    "Home Page",
+                Button(
+                    children="Home Page",
+                    variant="primary_ghost",
+                    size="sm",
+                    asLink=True,
                     href="/",
-                    className="p-2.5 rounded-[10px] font-semibold border border-[#B1CBCB] hover:bg-[#E3F4F4] duration-300",
                 ),
-                html.A(
-                    "Analysis Page",
+                Button(
+                    children="Analysis Page",
+                    variant="primary_ghost",
+                    size="sm",
+                    asLink=True,
                     href="/analysis",
-                    className="p-2.5 rounded-[10px] font-semibold border border-[#B1CBCB] hover:bg-[#E3F4F4] duration-300",
                 ),
-                html.Button(
+                Button(
                     children=["Login", html.Img(src="/assets/images/login.svg")],
-                    className="flex items-center gap-2.5 p-2.5 rounded-[10px] font-semibold bg-[#C4DFDF] hover:bg-[#B1CBCB] duration-300",
+                    variant="primary",
+                    size="sm",
+                    asLink=True,
+                    href="/login",
+                    className="flex items-center gap-2.5",
                 ),
-                html.Button(
-                    "Signup",
-                    className="p-2.5 rounded-[10px] font-semibold border border-[#B1CBCB] hover:bg-[#E3F4F4] duration-300",
+                Button(
+                    children="Signup",
+                    variant="primary_ghost",
+                    size="sm",
+                    asLink=True,
+                    href="/signup",
                 ),
             ],
             style={"box-shadow": "0 0 25px 0 hsla(180, 30%, 82%, 0.50)"},

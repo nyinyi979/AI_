@@ -1,8 +1,10 @@
-from dash import html, dcc, callback, Input, Output, State
 import dash
 import base64
 import io
 import pandas as pd
+from components.Button import Button
+from components.Typography import P
+from dash import html, dcc, callback, Input, Output, State
 
 dash.register_page(__name__, path="/")
 layout = html.Div(
@@ -10,36 +12,40 @@ layout = html.Div(
         dcc.Store(id="file-store", storage_type="local"),
         html.Div(
             children=[
-                html.P(
+                P(
                     "Find the details on your model, dataset in one click.",
-                    className="font-bold text-[42px] text-center",
+                    variant="heading1",
+                    className="text-center",
                 ),
                 dcc.Upload(
                     children=[
-                        html.P(
+                        P(
                             "Upload CSV file to get started...",
+                            variant="body2",
                             className="text-[#424242] ",
-                            id="filename",
+                            id="filename"
                         ),
-                        html.Button(
+                        Button(
                             children=[
                                 "Upload",
                                 html.Img(src="/assets/images/upload.svg"),
                             ],
-                            className="flex items-center gap-2.5 p-2.5 rounded-[10px] font-semibold bg-[#C4DFDF] hover:bg-[#B1CBCB] duration-300",
+                            variant="primary",
+                            size="md",
+                            className="flex items-center gap-2.5",
                         ),
                     ],
                     accept=".csv",
                     id="file-upload",
-                    className="w-[826px] block flex items-center justify-between mx-auto p-3 rounded-xl bg-[#D2E9E9] cursor-pointer",
+                    className="w-[826px] block group flex items-center justify-between mx-auto p-3 rounded-xl bg-[#D2E9E9] cursor-pointer",
                 ),
-                html.Button(
-                    children=[
-                        "Start Analysing",
-                    ],
+                Button(
+                    children="Start Analysing",
                     id="start-analyse",
                     disabled=True,
-                    className="flex items-center gap-2.5 px-5 py-4 text-xl rounded-[10px] font-semibold bg-[#C4DFDF] hover:bg-[#B1CBCB] disabled:bg-[#9BADAD] duration-300",
+                    variant="primary",
+                    size="md",
+                    className="flex items-center gap-2.5",
                 ),
             ],
             className="max-w-[858px] relative flex flex-col gap-5 items-center justify-center mt-40 z-[10] mx-auto bg-transparent",
