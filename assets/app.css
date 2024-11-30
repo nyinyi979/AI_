@@ -7,8 +7,10 @@
 }
 body{
     color: #141717;
+    background-color: #EEFFFF;
     font-family: "Host Grotesk";
     font-weight: medium;
     max-width: 100%;
+    position: relative;
     overflow-x: hidden;
 }

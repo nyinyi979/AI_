@@ -1,5 +1,5 @@
 import dash
-from dash import Dash, html, dcc
+from dash import Dash, html
 from components.Button import Button
 
 app = Dash(__name__, use_pages=True)
@@ -38,8 +38,8 @@ app.layout = html.Div(
                     href="/signup",
                 ),
             ],
-            style={"box-shadow": "0 0 25px 0 hsla(180, 30%, 82%, 0.50)"},
-            className="w-full sticky top-0 left-0 flex gap-[30px] relative justify-end items-center px-20 py-5 opacity-[80%] bg-[#EEFFFF] z-[100]",
+            style={"boxShadow": "0 0 25px 0 hsla(180, 30%, 82%, 0.50)"},
+            className="w-full sticky top-0 left-0 flex gap-[30px] justify-end items-center px-20 py-5 backdrop-blur-sm bg-[#EEFFFF]/80 z-[100]",
         ),
         dash.page_container,
     ]
