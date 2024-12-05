@@ -4,8 +4,8 @@ from components.Button import Button
 
 
 def Dialog():
-    return html.Dialog(
-        id="dialog_id",
+    return html.Div(
+        id="data-dialog",
         children=[
             P("Dialog Name", variant="body1"),
             html.P(id="form-output"),
@@ -41,7 +41,7 @@ def Dialog():
 
 
 @callback(
-    Output("dialog_id", "style"),
+    Output("data-dialog", "style"),
     Input("close_btn", "n_clicks"),
     prevent_initial_call=True,
 )

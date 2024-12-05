@@ -1,17 +1,15 @@
 from components.Button import Button
 from components.Typography import P
 from dash import html, dcc, callback, Input, Output, State
+import dash
 import base64
 import io
 import pandas as pd
 
-from page.home.DataDialog import DataDialog
 
-
-def Home():
+def Layout():
     return html.Div(
         children=[
-            DataDialog(),
             dcc.Store(id="file-store", storage_type="local"),
             html.Div(
                 children=[
@@ -57,21 +55,20 @@ def Home():
             ),
             html.Img(
                 src="assets/images/bg-box.png",
-                className="absolute -left-[5%] top-[158px] opacity-[80%] z-[2]",
+                className="absolute -left-[5%] top-[-138px] opacity-[80%] z-[2]",
             ),
             html.Img(
                 src="assets/images/bg-box.png",
-                className="absolute -left-[15%] top-[457px] opacity-[80%] z-[1]",
+                className="absolute -left-[15%] top-[237px] opacity-[80%] z-[1]",
             ),
             html.Img(
                 src="assets/images/bg-box.png",
-                className="absolute -right-[20%] top-[100px] z-[1]",
+                className="absolute -right-[20%] top-[-140px] z-[1]",
             ),
             html.Img(
                 src="assets/images/bg-box.png",
-                className="absolute -right-[15%] top-[400px] z-[1]",
+                className="absolute -right-[15%] top-[200px] z-[1]",
             ),
-            html.P(id="n_clicks"),
         ],
         className="relative w-full",
     )
@@ -81,12 +78,13 @@ def Home():
     Output("filename", "children", allow_duplicate=True),
     Output("file-store", "data"),
     Output("start-analyse", "disable_n_clicks", allow_duplicate=True),
-    Output("dialog_id", "style", allow_duplicate=True),
     Input("file-upload", "contents"),
     State("file-upload", "filename"),
     prevent_initial_call=True,
 )
 def handleFileUpload(contents, filename):
+    if contents is None:
+        return dash.no_update
     content_type, content_string = contents.split(",")
     decoded = base64.b64decode(content_string)
     df = pd.read_csv(io.StringIO(decoded.decode("utf-8")))
@@ -94,7 +92,6 @@ def handleFileUpload(contents, filename):
         filename,
         {"fileName": filename, "content": df.to_dict("records")},
         False,
-        {"display": "block"}
     )
 
 
@@ -106,3 +103,5 @@ def handleFileUpload(contents, filename):
 def getPreviousData(file):
     if file and file["content"] and file["fileName"]:
         return file["fileName"], False
+    else:
+        return "Upload CSV file to get started...", True

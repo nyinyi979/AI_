@@ -1,16 +1,18 @@
 from dash import html, dcc, callback, Input, Output
 from components.Button import Button
 from components.Typography import P
+from dash_svg import Svg, Path
 
 import plotly.graph_objs as go
 import pandas as pd
-from dash_svg import Svg, Path
+import numpy as np
 
 
 def DescriptiveAnalysis():
     return html.Div(
         [
             dcc.Store(id="file-store", storage_type="local"),
+            dcc.Store(id="used-col-row", storage_type="local"),
             html.Div(
                 [
                     Button(
@@ -20,13 +22,15 @@ def DescriptiveAnalysis():
                         ],
                         variant="primary",
                         id="uploaded-filename",
+                        n_clicks=0,
                         className="w-fit flex items-center gap-2.5 mb-4 rounded-[5px]",
                     ),
                     # Descriptive Analysis
                     P(
-                        "Descriptive Analytics(Using Columns)",
+                        [],
                         variant="body1",
                         className="my-0.5",
+                        id="title"
                     ),
                     html.Div(
                         [
@@ -63,26 +67,29 @@ def DescriptiveAnalysis():
     Output("uploaded-filename", "children"),
     Output("mean-graph", "figure"),
     Output("buttons", "children"),
+    Output("title", "children"),
     Input("file-store", "data"),
+    Input("used-col-row", "data"),
 )
-def loadData(file):
+def loadData(file, usedColRow):
     if file["fileName"] and file["content"]:
         df = pd.DataFrame(file["content"])
-
-        clean_df = df.select_dtypes(include="number").dropna()
-        mean_type = "rows"
-        if mean_type == "rows":
-            # Calculate mean of rows (only numerical rows)
-            means = clean_df.mean(axis=1)
-            x = df["animal_name"]
-            y = means
+        title = ""
+        clean_df = df.select_dtypes(include=np.number).dropna()
+        means = []
+        if usedColRow["useRow"] and usedColRow["useRow"] is True:
+            # iloc indexes can be used to access rows
+            means = clean_df.iloc[usedColRow["values"]].mean(axis=1)
+            title = "Descriptive Analytics(Using Rows)"
         else:
-            # Calculate mean of columns (only numerical columns)
-            means = clean_df.mean(axis=0)
-            x = df["animal_name"]
-            y = means
+            # selecting rows
+            title = "Descriptive Analytics(Using Columns)"
+            means = clean_df[usedColRow["values"]].mean()
+        x = clean_df.columns
+        if usedColRow["label"] and usedColRow["useRow"]:
+            x = df[usedColRow["label"]]
+        y = means
 
-        # Create a bar chart
         figure = go.Figure(
             data=[go.Bar(x=x, y=y, marker=dict(color="white"))],
             layout=go.Layout(
@@ -188,4 +195,17 @@ def loadData(file):
                     className="w-[230px] flex justify-between items-center group",
                 ),
             ],
+            title
         )
+
+
+@callback(
+    Output("data-dialog", "style", allow_duplicate=True),
+    Input("uploaded-filename", "n_clicks"),
+    prevent_initial_call=True,
+)
+def openDataDialog(n_clicks):
+    if n_clicks:
+        return {"boxShadow": "0 0 30px 0px rgba(0, 0, 0, 0.50)", "display": "block"}
+    else:
+        return None

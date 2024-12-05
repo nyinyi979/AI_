@@ -1,16 +1,108 @@
-.navbar{
-    box-shadow: 0 0 25px 0 hsla(180, 30%, 82%, 0.50);
+.navbar {
+  box-shadow: 0 0 25px 0 hsla(180, 30%, 82%, 0.5);
 }
 @font-face {
-    font-family: "Host Grotesk";
-    src: url(/assets/fonts/HostGrotesk-VariableFont_wght.ttf);
+  font-family: "Host Grotesk";
+  src: url(/assets/fonts/HostGrotesk-VariableFont_wght.ttf);
 }
-body{
-    color: #141717;
-    background-color: #EEFFFF;
-    font-family: "Host Grotesk";
-    font-weight: medium;
-    max-width: 100%;
-    position: relative;
-    overflow-x: hidden;
+body {
+  color: #141717;
+  background-color: #eeffff;
+  font-family: "Host Grotesk";
+  font-weight: medium;
+  max-width: 100%;
+  width: 100%;
+  position: relative;
+  overflow-x: hidden;
+}
+label:has(> input[type="checkbox"]) {
+  display: flex;
+  align-items: center;
+  justify-items: center;
+}
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  position: relative;
+  border-radius: 4px;
+  margin: 4px 10px 0 0;
+  padding-top: 1px;
+  border: 1px solid #424242;
+  overflow: hidden;
+  transition: all ease-in-out 300ms;
+}
+input[type="checkbox"]:hover,
+input[type="checkbox"]:checked {
+  border: 1px solid #141717;
+}
+input[type="checkbox"]:checked::after {
+  content: "";
+  appearance: none;
+  -webkit-appearance: none;
+  width: 12px;
+  height: 14px;
+  top: 2px;
+  left: 0.5px;
+  position: absolute;
+  background-image: url(/assets/images/check.svg);
+  background-size: contain;
+}
+#use-row > div{
+  width: fit-content;
+}
+
+/* toggle */
+.daq-toggleswitch--light__label{
+  display: flex;
+  gap: 10px;
+  flex-direction: row !important;
+  align-items: center !important;
+  font-size: 20px !important;
+  font-weight: 500 !important;
+}
+.daq-toggleswitch--light{
+  margin-top: 2px;
+}
+.daq-toggleswitch--light__label label{
+  padding-bottom: 1px;
+}
+.daq-toggleswitch--light__background{
+  background-color: #B1CBCB !important;
+}
+.daq-toggleswitch--light__background button{
+  background-color: #9BADAD;
+  border: 1px solid #E3F4F4;
+  outline: 0.5px solid #E3F4F4;
+}
+/* 9BADAD */
+#use-row .daq-toggleswitch--light__indicator--off, #use-row .daq-toggleswitch--light__indicator--on{
+  display: none;
+}
+
+/* selectbox */
+.Select-control{
+  border: none !important;
+  background-color: transparent !important;
+  max-height: 40px !important;
+  position: relative !important;
+}
+.Select-multi-value-wrapper::after{
+  content: "";
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  right: 4px;
+  top: 4px;
+  background-image: url(/assets/images/down.png);
+}
+.Select-multi-value-wrapper, .Select-control{
+  background-color: #E3F4F4 !important;
+}
+.Select-menu-outer .Select-menu {
+  background-color: #E3F4F4 !important;
+}
+.VirtualizedSelectFocusedOption, .VirtualizedSelectSelectedOption{
+  background-color: #D2E9E9;
 }

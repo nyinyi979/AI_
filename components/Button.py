@@ -35,7 +35,7 @@ def getButtonStyles(extraClassName: str, variant: ButtonVariants, size=ButtonSiz
     elif variant == "primary_ghost":
         className += "border border-[#C4DFDF] hover:bg-[#E3F4F4] group-hover:bg-[#E3F4F4] disabled:border-[#9BADAD]"
     elif variant == "secondary_ghost":
-        className += "border border-[#FFEEEE] hover:bg-[#FFEEEE] group-hover:bg-[#FFEEEE] disabled:border-[#E8D7D7]"
+        className += "border border-[#FFEEEE] hover:bg-[#FFF6F6] group-hover:bg-[#FFF6F6] disabled:border-[#E8D7D7]"
     elif variant == "success_ghost":
         className += "border border-[#A2E995] hover:bg-[#B3FFA5] group-hover:bg-[#B3FFA5] disabled:border-[#6D9865]"
     elif variant == "warning_ghost":

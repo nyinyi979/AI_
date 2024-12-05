@@ -1,11 +1,13 @@
 import dash
 from dash import Dash, html
 from components.Button import Button
+from page.DataDialog import DataDialog
 
 app = Dash(__name__, use_pages=True)
 
 app.layout = html.Div(
     [
+        DataDialog(),
         html.Div(
             [
                 Button(
@@ -42,7 +44,8 @@ app.layout = html.Div(
             className="w-full sticky top-0 left-0 flex gap-[30px] justify-end items-center px-20 py-5 backdrop-blur-sm bg-[#EEFFFF]/80 z-[100]",
         ),
         dash.page_container,
-    ]
+    ],
+    className="relative"
 )
 
 if __name__ == "__main__":

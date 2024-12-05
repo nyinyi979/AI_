@@ -1,9 +1,9 @@
 from dash import html
-from page.home.DataDialog import DataDialog
-from page.home.Home import Home
+from page.home.Layout import Layout
 
 
-layout = html.Div(
-    [Home()],
-    className="relative",
-)
+def Home():
+    return html.Div(
+        [Layout()],
+        className="relative",
+    )
