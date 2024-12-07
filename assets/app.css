@@ -49,12 +49,12 @@ input[type="checkbox"]:checked::after {
   background-image: url(/assets/images/check.svg);
   background-size: contain;
 }
-#use-row > div{
+#use-row > div {
   width: fit-content;
 }
 
 /* toggle */
-.daq-toggleswitch--light__label{
+.daq-toggleswitch--light__label {
   display: flex;
   gap: 10px;
   flex-direction: row !important;
@@ -62,33 +62,37 @@ input[type="checkbox"]:checked::after {
   font-size: 20px !important;
   font-weight: 500 !important;
 }
-.daq-toggleswitch--light{
+.daq-toggleswitch--light {
   margin-top: 2px;
 }
-.daq-toggleswitch--light__label label{
+.daq-toggleswitch--light__label label {
   padding-bottom: 1px;
 }
-.daq-toggleswitch--light__background{
-  background-color: #B1CBCB !important;
+.daq-toggleswitch--light__background {
+  background-color: #b1cbcb !important;
 }
-.daq-toggleswitch--light__background button{
-  background-color: #9BADAD;
-  border: 1px solid #E3F4F4;
-  outline: 0.5px solid #E3F4F4;
+.daq-toggleswitch--light__background button {
+  background-color: #9badad;
+  border: 1px solid #e3f4f4;
+  outline: 0.5px solid #e3f4f4;
+}
+.Select-arrow-zone,
+.Select-clear-zone {
+  display: none !important;
 }
 /* 9BADAD */
-#use-row .daq-toggleswitch--light__indicator--off, #use-row .daq-toggleswitch--light__indicator--on{
+#use-row .daq-toggleswitch--light__indicator--off,
+#use-row .daq-toggleswitch--light__indicator--on {
   display: none;
 }
-
 /* selectbox */
-.Select-control{
+.Select-control {
   border: none !important;
   background-color: transparent !important;
   max-height: 40px !important;
   position: relative !important;
 }
-.Select-multi-value-wrapper::after{
+.Select-multi-value-wrapper::after {
   content: "";
   position: absolute;
   width: 24px;
@@ -97,12 +101,27 @@ input[type="checkbox"]:checked::after {
   top: 4px;
   background-image: url(/assets/images/down.png);
 }
-.Select-multi-value-wrapper, .Select-control{
-  background-color: #E3F4F4 !important;
+.Select-multi-value-wrapper,
+.Select-control {
+  background-color: #e3f4f4 !important;
+  color: #141717 !important;
+}
+.Select-value-label,
+.Select-value-icon {
+  color: #141717 !important;
 }
 .Select-menu-outer .Select-menu {
-  background-color: #E3F4F4 !important;
+  background-color: #e3f4f4 !important;
 }
-.VirtualizedSelectFocusedOption, .VirtualizedSelectSelectedOption{
-  background-color: #D2E9E9;
+.VirtualizedSelectFocusedOption,
+.VirtualizedSelectSelectedOption {
+  background-color: #d2e9e9;
+}
+.Select-value {
+  border: 1px solid #d2e9e9 !important;
+}
+/* Slider */
+
+.rc-slider-rail {
+  background-color: #d2e9e9;
 }

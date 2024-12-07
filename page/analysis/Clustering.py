@@ -1,100 +1,33 @@
 import pandas as pd
 import numpy as np
-from dash import html, dcc, Input, Output, callback
 import plotly.graph_objs as go
+
+from page.analysis.ClusteringDialog import ClusteringDialog
+from components.Button import Button
+from dash import html, dcc, Input, Output, callback
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from components.Typography import P
 
 
-def Card(title=None, children=None, **kwargs):
-    """
-    Simple Card component replacement if not imported
-    """
-    return html.Div(
-        [
-            html.Div(
-                title, className="text-lg font-semibold mb-2" if title else "hidden"
-            ),
-            html.Div(children, className="p-4 bg-white rounded-lg shadow-md"),
-        ],
-        **kwargs,
-    )
-
-
-def create_clustering_controls():
-    """
-    Create control elements for clustering configuration
-    """
-    return html.Div(
-        [
-            # Number of Clusters Slider
-            html.Div(
-                [
-                    P("Number of Clusters", variant="body2", className="mb-2"),
-                    dcc.Slider(
-                        id="n-clusters-slider",
-                        min=2,
-                        max=10,
-                        value=3,
-                        marks={i: str(i) for i in range(2, 11)},
-                        step=1,
-                    ),
-                ],
-                className="mb-4",
-            ),
-            # Scaling Method Dropdown
-            html.Div(
-                [
-                    P("Scaling Method", variant="body2", className="mb-2"),
-                    dcc.Dropdown(
-                        id="scaling-method-dropdown",
-                        options=[
-                            {"label": "Standard Scaling", "value": "standard"},
-                            {"label": "Min-Max Scaling", "value": "minmax"},
-                        ],
-                        value="standard",
-                        clearable=False,
-                    ),
-                ],
-                className="mb-4",
-            ),
-        ],
-        className="p-4 bg-gray-50 rounded-lg",
-    )
-
-
 def Clustering():
     return html.Div(
         [
+            dcc.Store(id="file-store", storage_type="local"),
+            ClusteringDialog(),
             P(
                 "K-Means Clustering",
-                variant="heading2",
+                variant="body1",
                 className="mb-4",
             ),
             html.Div(
                 [
-                    # Left Column: Controls
-                    html.Div(
-                        [
-                            Card(
-                                title="Clustering Controls",
-                                children=create_clustering_controls(),
-                            )
-                        ],
-                        className="col-span-1 hidden",
-                    ),
                     # Right Column: Visualizations
                     html.Div(
                         [
                             html.Div(
                                 [
-                                    P(
-                                        "Unlabeled Data",
-                                        variant="body1",
-                                        className="mb-2",
-                                    ),
                                     dcc.Graph(
                                         id="unlabeled-data",
                                         figure={
@@ -109,16 +42,15 @@ def Clustering():
                                             "displaylogo": False,
                                         },
                                     ),
+                                    P(
+                                        "Unlabeled Data",
+                                        variant="body1",
+                                        className="text-center",
+                                    ),
                                 ],
-                                className="mb-4",
                             ),
                             html.Div(
                                 [
-                                    P(
-                                        "Clustered Data",
-                                        variant="body1",
-                                        className="mb-2",
-                                    ),
                                     dcc.Graph(
                                         id="clustered-data",
                                         config={
@@ -126,21 +58,31 @@ def Clustering():
                                             "displaylogo": False,
                                         },
                                     ),
+                                    P(
+                                        "Clustered Data",
+                                        variant="body1",
+                                        className="text-center",
+                                    ),
                                 ],
-                                className="mb-4",
-                            ),
-                            # Cluster Summary
-                            html.Div(
-                                id="cluster-summary",
-                                className="p-4 bg-gray-50 rounded-lg",
                             ),
                         ],
                         className="w-full grid grid-cols-2",
                     ),
                 ],
             ),
+            Button(
+                children=[
+                    "Setting",
+                    html.Img(src="assets/images/setting.svg", className="size-6"),
+                ],
+                size="sm",
+                variant="primary",
+                className="w-fit flex gap-2",
+                id="clustering-setting",
+                n_clicks=0
+            ),
         ],
-        className="p-4",
+        className="flex flex-col gap-2 px-4 pt-4 pb-8 relative border-b border-[#B1CBCB] 2xl:border-none",
     )
 
 
@@ -244,15 +186,23 @@ def update_clustering_visualization(n_clusters, scaling_method, file_data):
         cluster_summary_children = [
             P("Cluster Summary", variant="body1", className="mb-2"),
             html.Table(
-                [html.Tr([html.Th(col) for col in cluster_summary_df.columns])]
-                + [
-                    html.Tr(
-                        [
-                            html.Td(cluster_summary_df.iloc[i][col])
-                            for col in cluster_summary_df.columns
+                children=[
+                    html.Thead(
+                        children=html.Tr(
+                            [html.Th(col) for col in cluster_summary_df.columns]
+                        )
+                    ),
+                    html.Tbody(
+                        children=[
+                            html.Tr(
+                                [
+                                    html.Td(cluster_summary_df.iloc[i][col])
+                                    for col in cluster_summary_df.columns
+                                ]
+                            )
+                            for i in range(len(cluster_summary_df))
                         ]
-                    )
-                    for i in range(len(cluster_summary_df))
+                    ),
                 ]
             ),
         ]
@@ -275,3 +225,14 @@ def update_clustering_visualization(n_clusters, scaling_method, file_data):
                 className="text-red-500",
             ),
         )
+
+@callback(
+    Output("clustering-dialog","style"),
+    Input("clustering-setting","n_clicks"),
+    prevent_initial_callback=True
+)
+def openClusteringDialog(n_clicks):
+    if n_clicks:
+        return {"boxShadow": "0 0 30px 0px rgba(0, 0, 0, 0.50)", "display": "block"}
+    else:
+        return None

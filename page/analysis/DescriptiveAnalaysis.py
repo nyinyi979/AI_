@@ -26,12 +26,7 @@ def DescriptiveAnalysis():
                         className="w-fit flex items-center gap-2.5 mb-4 rounded-[5px]",
                     ),
                     # Descriptive Analysis
-                    P(
-                        [],
-                        variant="body1",
-                        className="my-0.5",
-                        id="title"
-                    ),
+                    P([], variant="body1", className="my-0.5", id="title"),
                     html.Div(
                         [
                             html.Div(
@@ -59,7 +54,7 @@ def DescriptiveAnalysis():
             ),
             dcc.Graph(id="mean-graph", config={"displayModeBar": False}),
         ],
-        className="grid grid-cols-2 gap-10 items-center",
+        className="grid grid-cols-2 gap-10 items-center px-4 pt-4 pb-8 relative border-b border-[#B1CBCB] 2xl:border-none",
     )
 
 
@@ -76,24 +71,23 @@ def loadData(file, usedColRow):
         df = pd.DataFrame(file["content"])
         title = ""
         clean_df = df.select_dtypes(include=np.number).dropna()
-        means = []
+        data = []
         if usedColRow["useRow"] and usedColRow["useRow"] is True:
             # iloc indexes can be used to access rows
-            means = clean_df.iloc[usedColRow["values"]].mean(axis=1)
+            data = clean_df.iloc[usedColRow["values"]].mean(axis=1)
             title = "Descriptive Analytics(Using Rows)"
         else:
             # selecting rows
             title = "Descriptive Analytics(Using Columns)"
-            means = clean_df[usedColRow["values"]].mean()
+            data = clean_df[usedColRow["values"]].mean()
         x = clean_df.columns
         if usedColRow["label"] and usedColRow["useRow"]:
             x = df[usedColRow["label"]]
-        y = means
+        y = data
 
         figure = go.Figure(
             data=[go.Bar(x=x, y=y, marker=dict(color="white"))],
             layout=go.Layout(
-                xaxis=dict(title="Labels"),
                 plot_bgcolor="rgba(0,0,0,0)",
                 paper_bgcolor="#D2E9E9",
                 height=300,
@@ -111,7 +105,7 @@ def loadData(file, usedColRow):
                     [
                         P(
                             "Mean value",
-                            variant="body1",
+                            variant="body2",
                         ),
                         Svg(
                             [
@@ -140,7 +134,7 @@ def loadData(file, usedColRow):
                     [
                         P(
                             "Median value",
-                            variant="body1",
+                            variant="body2",
                         ),
                         Svg(
                             [
@@ -169,7 +163,7 @@ def loadData(file, usedColRow):
                     [
                         P(
                             "Mode value",
-                            variant="body1",
+                            variant="body2",
                         ),
                         Svg(
                             [
@@ -194,8 +188,16 @@ def loadData(file, usedColRow):
                     ],
                     className="w-[230px] flex justify-between items-center group",
                 ),
+                P(
+                    "Row Counts",
+                    variant="body2",
+                ),
+                P(
+                    "Column Counts",
+                    variant="body2",
+                ),
             ],
-            title
+            title,
         )
 
 

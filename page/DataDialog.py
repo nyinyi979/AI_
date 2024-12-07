@@ -8,36 +8,42 @@ import pandas as pd
 
 def DataDialog():
     return html.Div(
+        html.Div(
+            children=[
+                dcc.Store(id="used-col-row", storage_type="local"),
+                dcc.Store(id="file-store", storage_type="local"),
+                html.Button(
+                    id="data-close-btn",
+                    children=[
+                        html.Img(src="assets/images/cross.svg", className="size-6")
+                    ],
+                    className="absolute right-3 top-3",
+                ),
+                P("Analysis Setting", variant="body1"),
+                html.P(id="form-output"),
+                daq.ToggleSwitch(
+                    id="use-row",
+                    value=True,
+                    label="Using Row",
+                    size=40,
+                    labelPosition="bottom",
+                ),
+                dcc.Dropdown(id="label", className="my-2"),
+                dcc.Checklist(id="checklist"),
+                html.P(id="checked"),
+            ],
+            className="w-[814px] h-[400px] overflow-auto flex flex-col gap-2 fixed left-[50%] top-[50%] -translate-x-[50%] -translate-y-[50%] p-5 rounded-xl bg-[#D2E9E9] z-[120] duration-300",
+            style={"boxShadow": "0 0 30px 0px rgba(0, 0, 0, 0.50)"},
+        ),
         id="data-dialog",
-        children=[
-            dcc.Store(id="used-col-row", storage_type="local"),
-            dcc.Store(id="file-store", storage_type="local"),
-            P("Analysis Setting", variant="body1", className="my-3"),
-            html.P(id="form-output"),
-            html.Button(
-                id="close_btn",
-                children=[html.Img(src="assets/images/cross.svg", className="size-6")],
-                className="absolute right-3 top-3",
-            ),
-            daq.ToggleSwitch(
-                id="use-row",
-                value=True,
-                label="Using Row",
-                size=40,
-                labelPosition="bottom",
-            ),
-            dcc.Dropdown(id="label", className="my-2"),
-            dcc.Checklist(id="checklist"),
-            html.P(id="checked"),
-        ],
-        className="w-[814px] h-[400px] overflow-auto hidden flex flex-col gap-3 fixed left-[50%] top-[50%] -translate-x-[50%] -translate-y-[50%] p-5 rounded-xl bg-[#D2E9E9] z-[120] duration-300",
-        style={"boxShadow": "0 0 30px 0px rgba(0, 0, 0, 0.50)", "display": "none"},
+        className="w-full h-full hidden fixed left-0 top-0 z-[120] bg-black/20",
+        style={"display": "none"},
     )
 
 
 @callback(
     Output("data-dialog", "style", allow_duplicate=True),
-    Input("close_btn", "n_clicks"),
+    Input("data-close-btn", "n_clicks"),
     prevent_initial_call=True,
 )
 def closeDialog(n_clicks):
@@ -97,6 +103,11 @@ def process_form(file, useRow):
 )
 def updateColRow(checkedValues, useRow, label):
     if useRow:
-        return {"useRow": True, "values": checkedValues, "label": label}
+        return {"useRow": True, "values": checkedValues, "label": label, "type": "mean"}
     else:
-        return {"useRow": False, "values": checkedValues, "label": label}
+        return {
+            "useRow": False,
+            "values": checkedValues,
+            "label": label,
+            "type": "mean",
+        }
