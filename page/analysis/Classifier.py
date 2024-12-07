@@ -1,15 +1,25 @@
 from dash import dcc, html, callback, Output, Input
 import pandas as pd
-from sklearn.ensemble import AdaBoostClassifier
+from sklearn.ensemble import AdaBoostClassifier, RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, accuracy_score
-
 
 def Classifier():
     return html.Div(
         [
             dcc.Store(id="file-store", storage_type="local"),
-            html.P("Report Using AdaboostClassifier", className="mb-2"),
+            html.P("Report Using Classifiers", className="mb-2"),
+            html.Label("Select Classifier:"),
+            dcc.Dropdown(
+                id="classifier-dropdown",
+                options=[
+                    {"label": "AdaBoost Classifier", "value": "adaboost"},
+                    {"label": "Random Forest Classifier", "value": "randomforest"},
+                ],
+                value="adaboost",  # Default value is AdaBoost
+                clearable=False,
+                style={"width": "100%"}  # Larger dropdown width
+            ),
             html.Label("Select Features (x):"),
             dcc.Dropdown(
                 id="x-columns",
@@ -42,6 +52,7 @@ def Classifier():
             ),
             html.Div(id="train-size-display", className="mt-2"),
             html.Div(id="test-size-display", className="mt-2"),
+            html.H4(id="classifier-title", className="mt-4"),  # Title for the classifier
             html.Table(
                 [
                     html.Thead(
@@ -73,6 +84,7 @@ def Classifier():
         Output("train-size-display", "children"),
         Output("test-size-display", "children"),
         Output("accuracy-display", "children"),  # Output for accuracy
+        Output("classifier-title", "children"),  # Output for classifier title
     ],
     [
         Input("file-store", "data"),
@@ -80,15 +92,17 @@ def Classifier():
         Input("y-columns", "value"),
         Input("test-size-slider", "value"),
         Input("train-size-slider", "value"),
+        Input("classifier-dropdown", "value"),  # Input for the selected classifier
     ],
 )
-def adaboostClassifier(file, xColumns, yColumns, test_size, train_size):
+def classifier(file, xColumns, yColumns, test_size, train_size, classifier_type):
     if not file or "content" not in file:
         return (
             [html.Tr([html.Td("No data provided or invalid file format.", colSpan=5, className="p-2 border")])],
             f"Train Size: {train_size:.2f}",
             f"Test Size: {test_size:.2f}",
             "Accuracy: N/A",
+            f"Using {classifier_type.capitalize()} Classifier",  # Classifier title
         )
 
     df = pd.DataFrame(file["content"])
@@ -99,6 +113,7 @@ def adaboostClassifier(file, xColumns, yColumns, test_size, train_size):
             f"Train Size: {train_size:.2f}",
             f"Test Size: {test_size:.2f}",
             "Accuracy: N/A",
+            f"Using {classifier_type.capitalize()} Classifier",  # Classifier title
         )
 
     x = df[xColumns].select_dtypes(include="number")
@@ -117,9 +132,15 @@ def adaboostClassifier(file, xColumns, yColumns, test_size, train_size):
             f"Train Size: {train_size:.2f}",
             f"Test Size: {test_size:.2f}",
             "Accuracy: N/A",
+            f"Using {classifier_type.capitalize()} Classifier",  # Classifier title
         )
 
-    model = AdaBoostClassifier(random_state=42)
+    # Select model based on the classifier type
+    if classifier_type == "adaboost":
+        model = AdaBoostClassifier(random_state=42)
+    elif classifier_type == "randomforest":
+        model = RandomForestClassifier(random_state=42)
+
     model.fit(x_train, y_train)
     y_pred = model.predict(x_test)
 
@@ -147,6 +168,7 @@ def adaboostClassifier(file, xColumns, yColumns, test_size, train_size):
         f"Train Size: {train_size:.2f}",
         f"Test Size: {test_size:.2f}",
         f"Accuracy: {accuracy:.2f}",  # Display accuracy under the table
+        f"Using {classifier_type.capitalize()} Classifier",  # Classifier title
     )
 
 
@@ -175,3 +197,27 @@ def initialize_dropdowns(file):
     y_default = all_columns[0]
 
     return x_options, x_default, y_options, y_default
+
+
+# Callback to adjust train and test size sliders based on the selected values
+@callback(
+    [
+        Output("train-size-slider", "value"),
+        Output("test-size-slider", "value"),
+    ],
+    [
+        Input("train-size-slider", "value"),
+        Input("test-size-slider", "value"),
+    ]
+)
+def adjust_slider_values(train_size, test_size):
+    if train_size + test_size > 1:
+        # Adjust the other slider if the sum exceeds 1
+        if train_size > test_size:
+            # Lower the test size if train size is greater
+            test_size = 1 - train_size
+        else:
+            # Lower the train size if test size is greater
+            train_size = 1 - test_size
+
+    return train_size, test_size
