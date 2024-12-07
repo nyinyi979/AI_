@@ -1,6 +1,5 @@
+from dash import dcc, html, callback, Output, Input
 import pandas as pd
-
-from dash import dcc, html, callback, Output, Input, State
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, accuracy_score
@@ -13,11 +12,15 @@ def Classifier():
             html.P("Report Using AdaboostClassifier", className="mb-2"),
             html.Label("Select Features (x):"),
             dcc.Dropdown(
-                id="x-columns", multi=True, placeholder="Select feature columns"
+                id="x-columns",
+                multi=True,
+                placeholder="Select feature columns",
             ),
             html.Label("Select Target (y):"),
             dcc.Dropdown(
-                id="y-columns", multi=False, placeholder="Select target column"
+                id="y-columns",
+                multi=False,
+                placeholder="Select target column",
             ),
             html.Label("Select Test Size:"),
             dcc.Slider(
@@ -25,10 +28,8 @@ def Classifier():
                 min=0.1,
                 max=0.9,
                 step=0.1,
-                value=0.3,  # Default value
-                marks={
-                    i: f"{i:.1f}" for i in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-                },
+                value=0.3,
+                marks={i: f"{i:.1f}" for i in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]},
             ),
             html.Label("Select Train Size:"),
             dcc.Slider(
@@ -36,11 +37,11 @@ def Classifier():
                 min=0.1,
                 max=0.9,
                 step=0.1,
-                value=0.7,  # Default value
-                marks={
-                    i: f"{i:.1f}" for i in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-                },
+                value=0.7,
+                marks={i: f"{i:.1f}" for i in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]},
             ),
+            html.Div(id="train-size-display", className="mt-2"),
+            html.Div(id="test-size-display", className="mt-2"),
             html.Table(
                 [
                     html.Thead(
@@ -60,9 +61,7 @@ def Classifier():
                 ],
                 className="w-full border-collapse",
             ),
-            # Add Divs for displaying the sizes
-            html.Div(id="train-size-display", className="mt-2"),
-            html.Div(id="test-size-display", className="mt-2"),
+            html.Div(id="accuracy-display", className="mt-4 text-lg font-bold"),  # Placeholder for accuracy
         ],
         className="mb-4",
     )
@@ -73,6 +72,7 @@ def Classifier():
         Output("classification-report-body", "children"),
         Output("train-size-display", "children"),
         Output("test-size-display", "children"),
+        Output("accuracy-display", "children"),  # Output for accuracy
     ],
     [
         Input("file-store", "data"),
@@ -83,47 +83,29 @@ def Classifier():
     ],
 )
 def adaboostClassifier(file, xColumns, yColumns, test_size, train_size):
-    if file is None:
+    if not file or "content" not in file:
         return (
-            html.Tr([html.Td("No file uploaded", colSpan=5, className="p-2 border")]),
-            f"Train Size: N/A",
-            f"Test Size: N/A",
+            [html.Tr([html.Td("No data provided or invalid file format.", colSpan=5, className="p-2 border")])],
+            f"Train Size: {train_size:.2f}",
+            f"Test Size: {test_size:.2f}",
+            "Accuracy: N/A",
         )
 
     df = pd.DataFrame(file["content"])
 
-    # Validate x_columns and y_column
-    if xColumns is None or yColumns is None:
+    if not xColumns or not yColumns:
         return (
-            html.Tr(
-                [
-                    html.Td(
-                        "Please select features and target",
-                        colSpan=5,
-                        className="p-2 border",
-                    )
-                ]
-            ),
-            f"Train Size: N/A",
-            f"Test Size: N/A",
+            [html.Tr([html.Td("Please select both features and target columns.", colSpan=5, className="p-2 border")])],
+            f"Train Size: {train_size:.2f}",
+            f"Test Size: {test_size:.2f}",
+            "Accuracy: N/A",
         )
 
-    if not set(xColumns).issubset(df.columns) or yColumns not in df.columns:
-        return (
-            html.Tr(
-                [html.Td("Invalid column selection", colSpan=5, className="p-2 border")]
-            ),
-            f"Train Size: N/A",
-            f"Test Size: N/A",
-        )
+    x = df[xColumns].select_dtypes(include="number")
+    y = df[yColumns]
 
-    # Ensure test_size + train_size <= 1
     if test_size + train_size > 1:
         train_size = 1 - test_size
-
-    # Prepare data
-    x = df[xColumns]
-    y = df[yColumns]
 
     try:
         x_train, x_test, y_train, y_test = train_test_split(
@@ -131,28 +113,19 @@ def adaboostClassifier(file, xColumns, yColumns, test_size, train_size):
         )
     except ValueError as e:
         return (
-            html.Tr(
-                [
-                    html.Td(
-                        f"Error in train-test split: {e}",
-                        colSpan=5,
-                        className="p-2 border",
-                    )
-                ]
-            ),
+            [html.Tr([html.Td(f"Error in train-test split: {e}", colSpan=5, className="p-2 border")])],
             f"Train Size: {train_size:.2f}",
             f"Test Size: {test_size:.2f}",
+            "Accuracy: N/A",
         )
 
-    # Train AdaBoost Classifier
     model = AdaBoostClassifier(random_state=42)
     model.fit(x_train, y_train)
     y_pred = model.predict(x_test)
 
-    # Generate classification report
     report = classification_report(y_test, y_pred, output_dict=True)
+    accuracy = accuracy_score(y_test, y_pred)
 
-    # Generate table rows dynamically
     rows = []
     for idx, (label, metrics) in enumerate(report.items()):
         if label == "accuracy":
@@ -160,9 +133,7 @@ def adaboostClassifier(file, xColumns, yColumns, test_size, train_size):
         rows.append(
             html.Tr(
                 [
-                    html.Td(
-                        label if label.isdigit() else "Average", className="p-2 border"
-                    ),
+                    html.Td(str(label), className="p-2 border"),
                     html.Td(f"{metrics['precision']:.2f}", className="p-2 border"),
                     html.Td(f"{metrics['recall']:.2f}", className="p-2 border"),
                     html.Td(f"{metrics['f1-score']:.2f}", className="p-2 border"),
@@ -170,19 +141,37 @@ def adaboostClassifier(file, xColumns, yColumns, test_size, train_size):
                 ]
             )
         )
-    return rows, f"Train Size: {train_size:.2f}", f"Test Size: {test_size:.2f}"
+
+    return (
+        rows,
+        f"Train Size: {train_size:.2f}",
+        f"Test Size: {test_size:.2f}",
+        f"Accuracy: {accuracy:.2f}",  # Display accuracy under the table
+    )
 
 
 @callback(
-    Output("x-columns", "options"),
-    Output("y-columns", "options"),
+    [Output("x-columns", "options"), Output("x-columns", "value"), Output("y-columns", "options"), Output("y-columns", "value")],
     Input("file-store", "data"),
 )
-def outputOption(file):
+def initialize_dropdowns(file):
     if file is None:
-        return [], []
+        return [], [], [], None
 
     df = pd.DataFrame(file["content"])
-    x_options = df.select_dtypes(include="number").dropna().columns.tolist()
-    y_options = df.select_dtypes(include="number").dropna().columns.tolist()
-    return x_options, y_options
+    if df.empty:
+        return [], [], [], None
+
+    # Get column options
+    all_columns = df.columns
+    numeric_columns = df.select_dtypes(include="number").columns
+
+    # x-columns options and defaults
+    x_options = [{"label": col, "value": col} for col in all_columns]
+    x_default = list(numeric_columns)
+
+    # y-columns options and default (first column)
+    y_options = [{"label": col, "value": col} for col in all_columns]
+    y_default = all_columns[0]
+
+    return x_options, x_default, y_options, y_default
