@@ -1,58 +1,18 @@
 from dash import dcc, html, callback, Output, Input
 import pandas as pd
+from page.analysis.ClassifierDialog import ClassifierDialog
 from sklearn.ensemble import AdaBoostClassifier, RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, accuracy_score
+from components.Typography import P
+from components.Button import Button
 
 def Classifier():
     return html.Div(
         [
             dcc.Store(id="file-store", storage_type="local"),
-            html.P("Report Using Classifiers", className="mb-2"),
-            html.Label("Select Classifier:"),
-            dcc.Dropdown(
-                id="classifier-dropdown",
-                options=[
-                    {"label": "AdaBoost Classifier", "value": "adaboost"},
-                    {"label": "Random Forest Classifier", "value": "randomforest"},
-                ],
-                value="adaboost",  # Default value is AdaBoost
-                clearable=False,
-                style={"width": "100%"}  # Larger dropdown width
-            ),
-            html.Label("Select Features (x):"),
-            dcc.Dropdown(
-                id="x-columns",
-                multi=True,
-                placeholder="Select feature columns",
-            ),
-            html.Label("Select Target (y):"),
-            dcc.Dropdown(
-                id="y-columns",
-                multi=False,
-                placeholder="Select target column",
-            ),
-            html.Label("Select Test Size:"),
-            dcc.Slider(
-                id="test-size-slider",
-                min=0.1,
-                max=0.9,
-                step=0.1,
-                value=0.3,
-                marks={i: f"{i:.1f}" for i in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]},
-            ),
-            html.Label("Select Train Size:"),
-            dcc.Slider(
-                id="train-size-slider",
-                min=0.1,
-                max=0.9,
-                step=0.1,
-                value=0.7,
-                marks={i: f"{i:.1f}" for i in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]},
-            ),
-            html.Div(id="train-size-display", className="mt-2"),
-            html.Div(id="test-size-display", className="mt-2"),
-            html.H4(id="classifier-title", className="mt-4"),  # Title for the classifier
+            ClassifierDialog(),
+            P(children=[html.Div(id="classifier-title", className="mt-4")], variant="body1"),
             html.Table(
                 [
                     html.Thead(
@@ -73,6 +33,17 @@ def Classifier():
                 className="w-full border-collapse",
             ),
             html.Div(id="accuracy-display", className="mt-4 text-lg font-bold"),  # Placeholder for accuracy
+            Button(
+                children=[
+                    "Setting",
+                    html.Img(src="assets/images/setting.svg", className="size-6"),
+                ],
+                size="sm",
+                variant="primary",
+                className="w-fit flex gap-2",
+                id="Classifier-setting",
+                n_clicks=0
+            ),
         ],
         className="mb-4",
     )
@@ -102,7 +73,7 @@ def classifier(file, xColumns, yColumns, test_size, train_size, classifier_type)
             f"Train Size: {train_size:.2f}",
             f"Test Size: {test_size:.2f}",
             "Accuracy: N/A",
-            f"Using {classifier_type.capitalize()} Classifier",  # Classifier title
+            f"Report Using {classifier_type.capitalize()} Classifier",  # Classifier title
         )
 
     df = pd.DataFrame(file["content"])
@@ -113,7 +84,7 @@ def classifier(file, xColumns, yColumns, test_size, train_size, classifier_type)
             f"Train Size: {train_size:.2f}",
             f"Test Size: {test_size:.2f}",
             "Accuracy: N/A",
-            f"Using {classifier_type.capitalize()} Classifier",  # Classifier title
+            f"Report Using {classifier_type.capitalize()} Classifier",  # Classifier title
         )
 
     x = df[xColumns].select_dtypes(include="number")
@@ -132,7 +103,7 @@ def classifier(file, xColumns, yColumns, test_size, train_size, classifier_type)
             f"Train Size: {train_size:.2f}",
             f"Test Size: {test_size:.2f}",
             "Accuracy: N/A",
-            f"Using {classifier_type.capitalize()} Classifier",  # Classifier title
+            f"Report Using {classifier_type.capitalize()} Classifier",  # Classifier title
         )
 
     # Select model based on the classifier type
@@ -168,7 +139,7 @@ def classifier(file, xColumns, yColumns, test_size, train_size, classifier_type)
         f"Train Size: {train_size:.2f}",
         f"Test Size: {test_size:.2f}",
         f"Accuracy: {accuracy:.2f}",  # Display accuracy under the table
-        f"Using {classifier_type.capitalize()} Classifier",  # Classifier title
+        f"Report Using {classifier_type.capitalize()} Classifier",  # Classifier title
     )
 
 
