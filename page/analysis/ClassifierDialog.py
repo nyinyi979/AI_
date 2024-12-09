@@ -6,50 +6,53 @@ def ClassifierDialog():
     return html.Div(
         html.Div(
             children=[
-            html.Label("Select Classifier:"),
-            dcc.Dropdown(
-                id="classifier-dropdown",
-                options=[
-                    {"label": "AdaBoost Classifier", "value": "adaboost"},
-                    {"label": "Random Forest Classifier", "value": "randomforest"},
-                ],
-                value="adaboost",  # Default value is AdaBoost
-                clearable=False,
-                style={"width": "100%"}  # Larger dropdown width
-            ),
-            html.Label("Select Features (x):"),
-            dcc.Dropdown(
-                id="x-columns",
-                multi=True,
-                placeholder="Select feature columns",
-            ),
-            html.Label("Select Target (y):"),
-            dcc.Dropdown(
-                id="y-columns",
-                multi=False,
-                placeholder="Select target column",
-            ),
-            html.Label("Select Test Size:"),
-            dcc.Slider(
-                id="test-size-slider",
-                min=0.1,
-                max=0.9,
-                step=0.1,
-                value=0.3,
-                marks={i: f"{i:.1f}" for i in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]},
-            ),
-            html.Label("Select Train Size:"),
-            dcc.Slider(
-                id="train-size-slider",
-                min=0.1,
-                max=0.9,
-                step=0.1,
-                value=0.7,
-                marks={i: f"{i:.1f}" for i in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]},
-            ),
-            html.Div(id="train-size-display", className="mt-2"),
-            html.Div(id="test-size-display", className="mt-2"),           
-
+                html.Label("Select Classifier:"),
+                dcc.Dropdown(
+                    id="classifier-dropdown",
+                    options=[
+                        {"label": "AdaBoost Classifier", "value": "adaboost"},
+                        {"label": "Random Forest Classifier", "value": "randomforest"},
+                    ],
+                    value="adaboost",  # Default value is AdaBoost
+                    clearable=False,
+                    style={"width": "100%"},  # Larger dropdown width
+                ),
+                html.Label("Select Features (x):"),
+                dcc.Dropdown(
+                    id="x-columns",
+                    multi=True,
+                    placeholder="Select feature columns",
+                ),
+                html.Label("Select Target (y):"),
+                dcc.Dropdown(
+                    id="y-columns",
+                    multi=False,
+                    placeholder="Select target column",
+                ),
+                html.Label("Select Test Size:"),
+                dcc.Slider(
+                    id="test-size-slider",
+                    min=0.1,
+                    max=0.9,
+                    step=0.1,
+                    value=0.3,
+                    marks={
+                        i: f"{i:.1f}"
+                        for i in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+                    },
+                ),
+                html.Label("Select Train Size:"),
+                dcc.Slider(
+                    id="train-size-slider",
+                    min=0.1,
+                    max=0.9,
+                    step=0.1,
+                    value=0.7,
+                    marks={
+                        i: f"{i:.1f}"
+                        for i in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+                    },
+                ),
                 html.Button(
                     id="classifier-close-btn",
                     children=[
@@ -74,6 +77,7 @@ def ClassifierDialog():
 )
 def closeDialog(n_clicks):
     return {"display": "none"}
+
 
 @callback(
     Output("classifier-dialog", "style", allow_duplicate=True),

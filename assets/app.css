@@ -125,3 +125,7 @@ input[type="checkbox"]:checked::after {
 .rc-slider-rail {
   background-color: #d2e9e9;
 }
+
+.active-svg path{
+  stroke: #141717;
+}

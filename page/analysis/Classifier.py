@@ -7,32 +7,42 @@ from sklearn.metrics import classification_report, accuracy_score
 from components.Typography import P
 from components.Button import Button
 
+
 def Classifier():
     return html.Div(
         [
             dcc.Store(id="file-store", storage_type="local"),
             ClassifierDialog(),
-            P(children=[html.Div(id="classifier-title", className="mt-4")], variant="body1"),
-            html.Table(
-                [
-                    html.Thead(
-                        [
-                            html.Tr(
-                                [
-                                    html.Th("No", className="p-2 border"),
-                                    html.Th("Precision", className="p-2 border"),
-                                    html.Th("Recall", className="p-2 border"),
-                                    html.Th("F1-Score", className="p-2 border"),
-                                    html.Th("Support", className="p-2 border"),
-                                ]
-                            ),
-                        ]
-                    ),
-                    html.Tbody(id="classification-report-body"),
-                ],
-                className="w-full border-collapse",
+            P(
+                children=[html.Div(id="classifier-title", className="my-4")],
+                variant="body1",
             ),
-            html.Div(id="accuracy-display", className="mt-4 text-lg font-bold"),  # Placeholder for accuracy
+            html.Div(
+                html.Table(
+                    [
+                        html.Thead(
+                            [
+                                html.Tr(
+                                    [
+                                        html.Th("Values", className="p-2"),
+                                        html.Th("Precision", className="p-2"),
+                                        html.Th("Recall", className="p-2"),
+                                        html.Th("F1-Score", className="p-2"),
+                                        html.Th("Support", className="p-2"),
+                                    ]
+                                ),
+                            ],
+                            className="font-semibold sticky bg-[#eeffffa3] backdrop-blur-sm border-b border-gray-200 top-0 left-0",
+                        ),
+                        html.Tbody(id="classification-report-body"),
+                    ],
+                    className="w-full border-collapse",
+                ),
+                className="max-h-[400px] overflow-y-auto relative",
+            ),
+            html.Div(
+                id="accuracy-display", className="mt-4 text-lg font-bold"
+            ),  # Placeholder for accuracy
             Button(
                 children=[
                     "Setting",
@@ -40,9 +50,9 @@ def Classifier():
                 ],
                 size="sm",
                 variant="primary",
-                className="w-fit flex gap-2",
+                className="w-fit flex gap-2 my-4",
                 id="Classifier-setting",
-                n_clicks=0
+                n_clicks=0,
             ),
         ],
         className="mb-4",
@@ -52,8 +62,6 @@ def Classifier():
 @callback(
     [
         Output("classification-report-body", "children"),
-        Output("train-size-display", "children"),
-        Output("test-size-display", "children"),
         Output("accuracy-display", "children"),  # Output for accuracy
         Output("classifier-title", "children"),  # Output for classifier title
     ],
@@ -69,7 +77,17 @@ def Classifier():
 def classifier(file, xColumns, yColumns, test_size, train_size, classifier_type):
     if not file or "content" not in file:
         return (
-            [html.Tr([html.Td("No data provided or invalid file format.", colSpan=5, className="p-2 border")])],
+            [
+                html.Tr(
+                    [
+                        html.Td(
+                            "No data provided or invalid file format.",
+                            colSpan=5,
+                            className="p-2 border",
+                        )
+                    ]
+                )
+            ],
             f"Train Size: {train_size:.2f}",
             f"Test Size: {test_size:.2f}",
             "Accuracy: N/A",
@@ -80,7 +98,17 @@ def classifier(file, xColumns, yColumns, test_size, train_size, classifier_type)
 
     if not xColumns or not yColumns:
         return (
-            [html.Tr([html.Td("Please select both features and target columns.", colSpan=5, className="p-2 border")])],
+            [
+                html.Tr(
+                    [
+                        html.Td(
+                            "Please select both features and target columns.",
+                            colSpan=5,
+                            className="p-2 border",
+                        )
+                    ]
+                )
+            ],
             f"Train Size: {train_size:.2f}",
             f"Test Size: {test_size:.2f}",
             "Accuracy: N/A",
@@ -99,7 +127,17 @@ def classifier(file, xColumns, yColumns, test_size, train_size, classifier_type)
         )
     except ValueError as e:
         return (
-            [html.Tr([html.Td(f"Error in train-test split: {e}", colSpan=5, className="p-2 border")])],
+            [
+                html.Tr(
+                    [
+                        html.Td(
+                            f"Error in train-test split: {e}",
+                            colSpan=5,
+                            className="p-2 border",
+                        )
+                    ]
+                )
+            ],
             f"Train Size: {train_size:.2f}",
             f"Test Size: {test_size:.2f}",
             "Accuracy: N/A",
@@ -136,15 +174,18 @@ def classifier(file, xColumns, yColumns, test_size, train_size, classifier_type)
 
     return (
         rows,
-        f"Train Size: {train_size:.2f}",
-        f"Test Size: {test_size:.2f}",
         f"Accuracy: {accuracy:.2f}",  # Display accuracy under the table
         f"Report Using {classifier_type.capitalize()} Classifier",  # Classifier title
     )
 
 
 @callback(
-    [Output("x-columns", "options"), Output("x-columns", "value"), Output("y-columns", "options"), Output("y-columns", "value")],
+    [
+        Output("x-columns", "options"),
+        Output("x-columns", "value"),
+        Output("y-columns", "options"),
+        Output("y-columns", "value"),
+    ],
     Input("file-store", "data"),
 )
 def initialize_dropdowns(file):
@@ -179,7 +220,7 @@ def initialize_dropdowns(file):
     [
         Input("train-size-slider", "value"),
         Input("test-size-slider", "value"),
-    ]
+    ],
 )
 def adjust_slider_values(train_size, test_size):
     if train_size + test_size > 1:

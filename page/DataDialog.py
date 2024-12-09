@@ -103,11 +103,10 @@ def process_form(file, useRow):
 )
 def updateColRow(checkedValues, useRow, label):
     if useRow:
-        return {"useRow": True, "values": checkedValues, "label": label, "type": "mean"}
+        return {"useRow": True, "values": checkedValues, "label": label}
     else:
         return {
             "useRow": False,
             "values": checkedValues,
             "label": label,
-            "type": "mean",
         }
