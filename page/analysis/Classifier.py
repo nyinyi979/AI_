@@ -117,7 +117,8 @@ def classifier(file, xColumns, yColumns, test_size, train_size, classifier_type)
 
     x = df[xColumns].select_dtypes(include="number")
     y = df[yColumns]
-
+    if y.dtype == float:
+        y = df[yColumns].astype(int)
     if test_size + train_size > 1:
         train_size = 1 - test_size
 

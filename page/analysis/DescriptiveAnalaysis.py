@@ -54,7 +54,7 @@ def DescriptiveAnalysis():
                                         height="24",
                                         viewBox="0 0 24 24",
                                         fill="none",
-                                        id="mean-svg"
+                                        id="mean-svg",
                                     ),
                                 ],
                                 id="mean",
@@ -86,7 +86,7 @@ def DescriptiveAnalysis():
                                         height="24",
                                         viewBox="0 0 24 24",
                                         fill="none",
-                                        id="median-svg"
+                                        id="median-svg",
                                     ),
                                 ],
                                 id="median",
@@ -118,20 +118,32 @@ def DescriptiveAnalysis():
                                         height="24",
                                         viewBox="0 0 24 24",
                                         fill="none",
-                                        id="mode-svg"
+                                        id="mode-svg",
                                     ),
                                 ],
                                 id="mode",
                                 n_clicks_timestamp=0,
                                 className="w-[230px] flex justify-between items-center group",
                             ),
-                            P(
-                                "Row Counts",
-                                variant="body2",
+                            html.Div(
+                                [
+                                    P(
+                                        "Row Counts",
+                                        variant="body2",
+                                    ),
+                                    P("", variant="body2", id="row-count"),
+                                ],
+                                className="w-[230px] flex justify-between items-center group",
                             ),
-                            P(
-                                "Column Counts",
-                                variant="body2",
+                            html.Div(
+                                [
+                                    P(
+                                        "Column Counts",
+                                        variant="body2",
+                                    ),
+                                    P("", variant="body2", id="column-count"),
+                                ],
+                                className="w-[230px] flex justify-between items-center group",
                             ),
                         ],
                         id="buttons",
@@ -153,6 +165,8 @@ def DescriptiveAnalysis():
     Output("mean-svg", "className"),
     Output("median-svg", "className"),
     Output("mode-svg", "className"),
+    Output("row-count", "children"),
+    Output("column-count", "children"),
     Input("file-store", "data"),
     Input("used-col-row", "data"),
     Input("mean", "n_clicks_timestamp"),
@@ -217,7 +231,10 @@ def loadData(file, usedColRow, mean, median, mode):
             "active-svg" if type == "mean" else "",
             "active-svg" if type == "median" else "",
             "active-svg" if type == "mode" else "",
+            clean_df.shape[0],
+            clean_df.shape[1],
         )
+
 
 @callback(
     Output("data-dialog", "style", allow_duplicate=True),
